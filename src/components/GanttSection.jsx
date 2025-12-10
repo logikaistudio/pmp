@@ -26,8 +26,17 @@ const GanttSection = () => {
         }
 
         return wbsData.map((item) => {
-            const start = new Date(item.startDate);
-            const end = new Date(item.endDate);
+            let start = new Date(item.startDate);
+            let end = new Date(item.endDate);
+
+            // Handle invalid dates
+            if (isNaN(start.getTime())) start = new Date();
+            if (isNaN(end.getTime())) end = new Date(start.getTime() + 86400000); // +1 day
+
+            // Critical: Start MUST be before End for Gantt library
+            if (start >= end) {
+                end = new Date(start.getTime() + 86400000); // Force +1 day difference
+            }
 
             // Map dependencies to Gantt format
             const dependencies = item.dependencies?.map(dep => dep.predecessorId) || [];

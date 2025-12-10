@@ -32,6 +32,7 @@ const WBSTable = () => {
         id: '',
         name: '',
         weight: 0,
+        target: 0,
         progress: 0,
         level: 0,
         startDate: '',
@@ -93,7 +94,16 @@ const WBSTable = () => {
             alert('Please fill in ID and Task Name');
             return;
         }
-        addWBSItem(newItemForm);
+
+        // Ensure dates are valid
+        const itemToAdd = {
+            ...newItemForm,
+            // Default to today if empty
+            startDate: newItemForm.startDate || new Date().toISOString().split('T')[0],
+            endDate: newItemForm.endDate || new Date().toISOString().split('T')[0]
+        };
+
+        addWBSItem(itemToAdd);
         setNewItemForm({
             id: '',
             name: '',
@@ -134,14 +144,14 @@ const WBSTable = () => {
                     {canAdd && (
                         <button
                             onClick={() => {
-                                if (window.confirm('Reset all WBS data to initial state? This will clear all your changes.')) {
+                                if (window.confirm('Are you sure you want to delete ALL data? This cannot be undone.')) {
                                     resetWBSData();
                                 }
                             }}
                             className="btn btn-secondary"
-                            style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}
+                            style={{ padding: '0.5rem 1rem', fontSize: '0.85rem', background: '#fecaca', color: '#991b1b', border: '1px solid #f87171' }}
                         >
-                            🔄 Reset Data
+                            🗑️ Clear All Data
                         </button>
                     )}
                     {canAdd && !isAdding && (
@@ -166,6 +176,7 @@ const WBSTable = () => {
                         <th style={{ padding: '1rem', color: 'var(--text-muted)', fontWeight: 600 }}>End Date</th>
                         <th style={{ padding: '1rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>Weight (%)</th>
                         <th style={{ padding: '1rem', color: 'var(--text-muted)', fontWeight: 600 }}>Dependencies</th>
+
                         <th style={{ padding: '1rem', color: 'var(--text-muted)', fontWeight: 600 }}>Progress</th>
                         <th style={{ padding: '1rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>Status</th>
                         {(canEdit || canDelete) && (
@@ -194,7 +205,7 @@ const WBSTable = () => {
                                 />
                             </td>
                             <td style={{ padding: '1rem' }}>
-                                <input
+                                <input // Level removed, simplified to Name only
                                     type="text"
                                     placeholder="Task Name"
                                     value={newItemForm.name}
@@ -209,24 +220,6 @@ const WBSTable = () => {
                                         fontSize: '0.9rem'
                                     }}
                                 />
-                                <select
-                                    value={newItemForm.level}
-                                    onChange={(e) => setNewItemForm({ ...newItemForm, level: parseInt(e.target.value) })}
-                                    style={{
-                                        width: '100%',
-                                        marginTop: '0.5rem',
-                                        padding: '0.5rem',
-                                        background: 'rgba(255,255,255,0.05)',
-                                        border: '1px solid var(--border-color)',
-                                        borderRadius: 'var(--radius-sm)',
-                                        color: 'var(--text-primary)',
-                                        fontSize: '0.85rem'
-                                    }}
-                                >
-                                    <option value="0">📋 Main Task (Level 0)</option>
-                                    <option value="1">  └─ Sub Task (Level 1)</option>
-                                    <option value="2">    └─ Sub-Sub Task (Level 2)</option>
-                                </select>
                             </td>
                             <td style={{ padding: '1rem', textAlign: 'center' }}>-</td>
                             <td style={{ padding: '1rem' }}>
@@ -277,24 +270,8 @@ const WBSTable = () => {
                                     }}
                                 />
                             </td>
-                            <td style={{ padding: '1rem', textAlign: 'center' }}>
-                                <select
-                                    value={newItemForm.status}
-                                    onChange={(e) => setNewItemForm({ ...newItemForm, status: e.target.value })}
-                                    style={{
-                                        padding: '0.5rem',
-                                        background: 'rgba(255,255,255,0.05)',
-                                        border: '1px solid var(--border-color)',
-                                        borderRadius: 'var(--radius-sm)',
-                                        color: 'var(--text-primary)',
-                                        fontSize: '0.85rem'
-                                    }}
-                                >
-                                    <option value="On Track">On Track</option>
-                                    <option value="At Risk">At Risk</option>
-                                    <option value="Delayed">Delayed</option>
-                                </select>
-                            </td>
+                            <td style={{ padding: '1rem', textAlign: 'center' }}>-</td>
+
                             <td style={{ padding: '1rem' }}>
                                 <input
                                     type="number"
@@ -312,6 +289,24 @@ const WBSTable = () => {
                                         textAlign: 'center'
                                     }}
                                 />
+                            </td>
+                            <td style={{ padding: '1rem', textAlign: 'center' }}>
+                                <select
+                                    value={newItemForm.status}
+                                    onChange={(e) => setNewItemForm({ ...newItemForm, status: e.target.value })}
+                                    style={{
+                                        padding: '0.5rem',
+                                        background: 'rgba(255,255,255,0.05)',
+                                        border: '1px solid var(--border-color)',
+                                        borderRadius: 'var(--radius-sm)',
+                                        color: 'var(--text-primary)',
+                                        fontSize: '0.85rem'
+                                    }}
+                                >
+                                    <option value="On Track">On Track</option>
+                                    <option value="At Risk">At Risk</option>
+                                    <option value="Delayed">Delayed</option>
+                                </select>
                             </td>
                             <td style={{ padding: '1rem' }}>
                                 <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -351,42 +346,22 @@ const WBSTable = () => {
                                 </td>
                                 <td style={{ padding: '1rem' }}>
                                     {isEditing ? (
-                                        <>
-                                            <input
-                                                type="text"
-                                                value={editForm.name}
-                                                onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                                                style={{
-                                                    width: '100%',
-                                                    padding: '0.5rem',
-                                                    background: 'rgba(255,255,255,0.05)',
-                                                    border: '1px solid var(--border-color)',
-                                                    borderRadius: 'var(--radius-sm)',
-                                                    color: 'var(--text-primary)',
-                                                    fontSize: '0.9rem'
-                                                }}
-                                            />
-                                            <select
-                                                value={editForm.level}
-                                                onChange={(e) => setEditForm({ ...editForm, level: parseInt(e.target.value) })}
-                                                style={{
-                                                    width: '100%',
-                                                    marginTop: '0.5rem',
-                                                    padding: '0.5rem',
-                                                    background: 'rgba(255,255,255,0.05)',
-                                                    border: '1px solid var(--border-color)',
-                                                    borderRadius: 'var(--radius-sm)',
-                                                    color: 'var(--text-primary)',
-                                                    fontSize: '0.85rem'
-                                                }}
-                                            >
-                                                <option value="0">📋 Main Task (Level 0)</option>
-                                                <option value="1">  └─ Sub Task (Level 1)</option>
-                                                <option value="2">    └─ Sub-Sub Task (Level 2)</option>
-                                            </select>
-                                        </>
+                                        <input
+                                            type="text"
+                                            value={editForm.name}
+                                            onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.5rem',
+                                                background: 'rgba(255,255,255,0.05)',
+                                                border: '1px solid var(--border-color)',
+                                                borderRadius: 'var(--radius-sm)',
+                                                color: 'var(--text-primary)',
+                                                fontSize: '0.9rem'
+                                            }}
+                                        />
                                     ) : (
-                                        <span style={{ paddingLeft: `${item.level * 1.5}rem`, display: 'block', fontWeight: item.level === 0 ? 600 : 400 }}>
+                                        <span style={{ fontWeight: 400 }}>
                                             {item.name}
                                         </span>
                                     )}
@@ -439,30 +414,21 @@ const WBSTable = () => {
                                 </td>
                                 <td style={{ padding: '1rem', textAlign: 'center' }}>
                                     {isEditing ? (
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                                            <input
-                                                type="number"
-                                                value={editForm.weight}
-                                                onChange={(e) => setEditForm({ ...editForm, weight: parseInt(e.target.value) || 0 })}
-                                                disabled={item.isCalculated}
-                                                style={{
-                                                    width: '60px',
-                                                    padding: '0.5rem',
-                                                    background: item.isCalculated ? 'rgba(100,100,100,0.2)' : 'rgba(255,255,255,0.05)',
-                                                    border: '1px solid var(--border-color)',
-                                                    borderRadius: 'var(--radius-sm)',
-                                                    color: 'var(--text-primary)',
-                                                    fontSize: '0.85rem',
-                                                    textAlign: 'center',
-                                                    cursor: item.isCalculated ? 'not-allowed' : 'text'
-                                                }}
-                                            />
-                                            {item.isCalculated && (
-                                                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-                                                    Auto-calc
-                                                </span>
-                                            )}
-                                        </div>
+                                        <input
+                                            type="number"
+                                            value={editForm.weight}
+                                            onChange={(e) => setEditForm({ ...editForm, weight: parseInt(e.target.value) || 0 })}
+                                            style={{
+                                                width: '60px',
+                                                padding: '0.5rem',
+                                                background: 'rgba(255,255,255,0.05)',
+                                                border: '1px solid var(--border-color)',
+                                                borderRadius: 'var(--radius-sm)',
+                                                color: 'var(--text-primary)',
+                                                fontSize: '0.85rem',
+                                                textAlign: 'center'
+                                            }}
+                                        />
                                     ) : (
                                         <span className="badge" style={{
                                             background: 'rgba(56, 189, 248, 0.1)',
@@ -474,7 +440,6 @@ const WBSTable = () => {
                                             alignItems: 'center',
                                             gap: '4px'
                                         }}>
-                                            {item.isCalculated && <span title="Auto-calculated from children">🧮</span>}
                                             {item.weight}%
                                         </span>
                                     )}
@@ -547,6 +512,9 @@ const WBSTable = () => {
                                         </span>
                                     )}
                                 </td>
+
+
+                                {/* --- PROGRESS COLUMN --- */}
                                 <td style={{ padding: '1rem', width: '20%' }}>
                                     {isEditing ? (
                                         <input
@@ -579,6 +547,7 @@ const WBSTable = () => {
                                         </div>
                                     )}
                                 </td>
+
                                 <td style={{ padding: '1rem', textAlign: 'center' }}>
                                     {isEditing ? (
                                         <select

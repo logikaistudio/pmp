@@ -4,13 +4,13 @@ import { ThemeProvider } from './context/ThemeContext';
 import { ProjectProvider, useProject } from './context/ProjectContext';
 import { WBSProvider, useWBS } from './context/WBSContext';
 import TargetRealizationChart from './components/TargetRealizationChart';
-import GanttSection from './components/GanttSection';
 import WBSTable from './components/WBSTable';
 import ProjectInfo from './components/ProjectInfo';
 import LoginModal from './components/LoginModal';
 import SettingsModal from './components/SettingsModal';
 import ThemeToggle from './components/ThemeToggle';
 import { handleDownloadPDF } from './components/PDFExport';
+
 
 function AppContent() {
   const { user, login, logout, isAdmin } = useAuth();
@@ -35,7 +35,7 @@ function AppContent() {
   return (
     <div className="App">
       {/* Header / Actions */}
-      <header className="glass-card" style={{
+      <header id="project-header" className="glass-card" style={{
         position: 'fixed',
         top: 0,
         left: 0,
@@ -77,14 +77,14 @@ function AppContent() {
               <button
                 onClick={() => setShowSettings(true)}
                 className="btn btn-ghost"
-                style={{ padding: '0.5rem 1rem' }}
               >
                 ⚙️ Settings
               </button>
             )}
-            <button onClick={handleDownloadPDF} className="btn btn-ghost">
+            <button onClick={() => handleDownloadPDF(projectInfo, wbsData)} className="btn btn-ghost">
               📄 Export PDF
             </button>
+
             <button onClick={logout} className="btn btn-primary">
               🚪 Logout
             </button>
@@ -99,7 +99,7 @@ function AppContent() {
           <section style={{ marginBottom: '2rem' }}>
             <div className="grid-responsive" style={{ gridTemplateColumns: '1fr 2fr', gap: '2rem' }}>
               {/* Key Metrics Cards */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem', alignContent: 'start' }}>
+              <div id="metrics-container" style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem', alignContent: 'start' }}>
                 <div className="glass-card">
                   <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Project Progress</p>
                   <h2 style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0.5rem 0' }}>{overallProgress}%</h2>
@@ -125,24 +125,21 @@ function AppContent() {
               </div>
 
               {/* S-Curve Chart - Same height as metrics column */}
-              <div style={{ height: '100%', minHeight: '400px' }}>
+              <div id="s-curve-container" style={{ height: '100%', minHeight: '400px' }}>
                 <TargetRealizationChart />
               </div>
             </div>
           </section>
 
           {/* Project Information Section */}
-          <ProjectInfo />
+          <div id="project-info-container">
+            <ProjectInfo />
+          </div>
 
-          {/* Gantt Chart Section - Same height as S-Curve */}
-          <section style={{ marginBottom: '2rem' }}>
-            <div style={{ height: '500px' }}>
-              <GanttSection />
-            </div>
-          </section>
+          {/* Gantt Chart Removed per user request */}
 
           {/* WBS Section */}
-          <section>
+          <section id="wbs-container">
             <WBSTable />
           </section>
         </div>
