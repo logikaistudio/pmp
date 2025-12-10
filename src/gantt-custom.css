@@ -1,0 +1,127 @@
+/* Custom Gantt Chart Styling */
+
+/* Override default gantt styles to match app theme */
+.gantt-task-react {
+    font-family: 'Outfit', sans-serif !important;
+}
+
+/* Task bars */
+._3uo9D {
+    fill: var(--color-primary) !important;
+    rx: 6 !important;
+    ry: 6 !important;
+}
+
+/* Progress bars */
+._2rXNm {
+    fill: var(--color-primary-dark) !important;
+    rx: 6 !important;
+    ry: 6 !important;
+}
+
+/* Project bars */
+._1b4vS {
+    fill: var(--color-secondary) !important;
+    rx: 6 !important;
+    ry: 6 !important;
+}
+
+/* Milestone diamonds */
+._2Jtzp {
+    fill: var(--color-secondary) !important;
+}
+
+/* Grid lines */
+._3d9Kx {
+    stroke: var(--border-color) !important;
+}
+
+/* Today line */
+._1Nxoj {
+    stroke: var(--color-primary) !important;
+    stroke-width: 2 !important;
+}
+
+/* Task list header */
+._1rGVz {
+    background: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+/* Task list rows */
+._3lLk3 {
+    background: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+/* Task list rows hover */
+._3lLk3:hover {
+    background: var(--bg-card-hover) !important;
+}
+
+/* Calendar header */
+._1rGVz {
+    background: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Calendar cells */
+._3d9Kx {
+    fill: transparent !important;
+}
+
+/* Arrows/Dependencies */
+._2Jtzp {
+    stroke: var(--color-secondary) !important;
+    fill: var(--color-secondary) !important;
+}
+
+/* Tooltip */
+._2rXNm {
+    background: var(--bg-app) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--radius-md) !important;
+    color: var(--text-primary) !important;
+    box-shadow: var(--shadow-lg) !important;
+}
+
+/* Light theme adjustments */
+[data-theme="light"] ._3uo9D {
+    fill: var(--color-primary) !important;
+    filter: brightness(1.1) !important;
+}
+
+[data-theme="light"] ._2rXNm {
+    fill: var(--color-primary-dark) !important;
+}
+
+[data-theme="light"] ._1b4vS {
+    fill: var(--color-secondary) !important;
+    filter: brightness(1.1) !important;
+}
+
+[data-theme="light"] ._1rGVz {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2) !important;
+}
+
+[data-theme="light"] ._3lLk3 {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2) !important;
+}
+
+[data-theme="light"] ._3lLk3:hover {
+    background: #f8fafc !important;
+}
+
+[data-theme="light"] ._3d9Kx {
+    stroke: rgba(148, 163, 184, 0.2) !important;
+}
+
+[data-theme="light"] ._1Nxoj {
+    stroke: var(--color-primary) !important;
+}
